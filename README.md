@@ -31,6 +31,14 @@ If you're on a different distro or want to install the packages yourself:
 ./install.sh --no-deps
 ```
 
+### Packages
+
+All programs this rice uses, in one command (`swayfx`, `wlogout` and `swaylock-effects` are in the AUR):
+
+```sh
+yay -S --needed swayfx swaybg waybar rofi mako wlogout swaylock-effects ghostty grim slurp wl-clipboard brightnessctl playerctl wireplumber polkit-gnome pavucontrol blueman network-manager-applet ttf-jetbrains-mono-nerd
+```
+
 Then log into Sway. If you're already in Sway, press `Super + Shift + C`.
 
 ### Update
