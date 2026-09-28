@@ -1,0 +1,9 @@
+image=~/.config/sway/wallpaper/uiadsofsa.png
+indicator
+clock
+effect-blur=7x7
+effect-vignette=0.5:0.5
+indicator-radius=100
+indicator-thickness=7
+ring-color=white
+text-color=white

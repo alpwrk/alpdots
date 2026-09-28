@@ -1,0 +1,93 @@
+@define-color background rgba(0, 0, 0, 0.5);
+@define-color foreground #ffffff;
+
+* {
+  background-color: transparent;
+  color: @foreground;
+  border: 0px solid alpha(@foreground, 0.6);
+  border-radius: 0;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  font-family: 'JetBrainsMono Nerd Font';
+  font-size: 14px;
+}
+
+window#waybar {
+  background-color: @background;
+}
+
+.modules-left {
+  margin-left: 8px;
+}
+
+.modules-right {
+  margin-right: 8px;
+}
+
+#tray {
+  margin-right: 4px;
+}
+
+#pulseaudio {
+  margin-left: 12px;
+  margin-right: 4px;
+}
+
+#clock {
+  margin-left: 12px;
+}
+
+#workspaces button {
+  all: initial;
+  transition: all 90ms ease-in-out;
+  padding: 0 6px;
+  min-width: 2px;
+}
+
+#workspaces button.focused,
+#workspaces button.visible {
+  background-color: @foreground;
+  color: @background;
+  border-radius: 4px;
+}
+
+#workspaces button.focused label,
+#workspaces button.visible label {
+  color: @background;
+}
+
+#workspaces button.empty {
+  opacity: 0.5;
+}
+
+#workspaces button.visible {
+  opacity: 1;
+}
+
+#network {
+  margin-left: 3px;
+  margin-right: 10px;
+}
+
+#bluetooth {
+  margin-right: 6px;
+}
+
+#window {
+  font-size: 13px;
+  opacity: 0.9;
+}
+
+/* Invisible arrow; its padding is the hover area that opens the drawer */
+#custom-trayarrow {
+  color: transparent;
+  font-size: 12px;
+  padding: 0 4px;
+  margin-right: 8px;
+}
+
+#custom-notification-silencing-indicator {
+  margin-right: 2px;
+  min-width: 15px;
+}
