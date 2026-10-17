@@ -82,6 +82,7 @@ window#waybar {
 #pulseaudio,
 #custom-brightness-hdmi,
 #custom-brightness-dp,
+#backlight,
 #mpris {
   margin-left: 12px;
   margin-right: 4px;

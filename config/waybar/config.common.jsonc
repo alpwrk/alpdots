@@ -90,6 +90,14 @@
     "tooltip": false
   },
 
+  // Laptop panel brightness, same look as brightness.sh on the DDC bars
+  "backlight": {
+    "format": "󰖙 {percent}%",
+    "tooltip-format": "Brightness: {percent}%",
+    "on-scroll-up": "brightnessctl set 5%+",
+    "on-scroll-down": "brightnessctl set 5%-"
+  },
+
   // Far right. Empty here; local.jsonc (written by install.sh on laptops)
   // puts the battery in.
   "group/laptop": {

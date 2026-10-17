@@ -52,12 +52,14 @@
     }
   },
   {
-    // Every other output (laptop panel, other monitors): no DDC brightness
+    // Every other output (laptop panel, other monitors): no DDC brightness,
+    // backlight instead (disables itself when there is no backlight device)
     "include": ["local.jsonc", "config.common.jsonc"],
     "output": ["!HDMI-A-1", "!DP-1", "*"],
     "modules-right": [
       "group/traydrawer",
       "pulseaudio",
+      "backlight",
       "mpris",
       "group/laptop"
     ]

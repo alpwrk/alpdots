@@ -86,7 +86,7 @@ Hover the right edge of the bar, just left of the volume, to slide out the tray,
 
 - **Keyboard layout:** the config uses `de`. Change `xkb_layout` in `config/sway/config`.
 - **Monitors:** the config sets `DP-1` to 1920x1080@180Hz with adaptive sync and has a commented second monitor (`HDMI-A-1`) with fixed workspaces 1-5 / 6-10. Change those lines to your outputs (list them with `swaymsg -t get_outputs`); any other output just uses its preferred mode.
-- **Waybar:** `DP-1` and `HDMI-A-1` get their own bar with a DDC/CI brightness module (scroll on it, needs `ddcutil`), every other output gets a bar without it. Next to it is the now-playing (mpris) module.
+- **Waybar:** `DP-1` and `HDMI-A-1` get their own bar with a DDC/CI brightness module (scroll on it, needs `ddcutil`), every other output (e.g. a laptop panel) gets a bar with the regular backlight module instead (scroll to change it). Next to it is the now-playing (mpris) module.
 - **Wallpaper:** press `AltGr + #` to open bgswitch, an Alt-Tab style picker. `Tab`/arrows/`h j k l` select, `Enter` sets, `Esc` cancels, and pressing `AltGr + #` again while it's open steps forward. It lists images from `config/sway/wallpaper/` and `~/Pictures/wallpapers/`, and the choice is kept as a symlink in `~/.cache/bgswitch/current`. For the lockscreen, change `image=` in `config/swaylock/config`.
 - **Shell:** put machine-specific things (extra `PATH`s, `EDITOR`, …) into `~/.zshrc.local`, the tracked `.zshrc` sources it. Type `y` to open Yazi; when you quit, the shell `cd`s to where you were in Yazi.
 - **Battery module:** to add or remove it by hand, create or delete `config/waybar/local.jsonc` (see `config/waybar/defaults.jsonc` for the default module list).
