@@ -23,7 +23,7 @@ PKGS=(
   polkit-gnome pavucontrol blueman network-manager-applet
   python-gobject gtk4 gtk4-layer-shell
   oh-my-zsh-git zsh-autosuggestions zsh-syntax-highlighting
-  yazi ffmpeg 7zip jq poppler fd ripgrep fzf zoxide
+  fastfetch yazi ffmpeg 7zip jq poppler fd ripgrep fzf zoxide
   ttf-jetbrains-mono-nerd ttf-bigblueterminal-nerd
 )
 
