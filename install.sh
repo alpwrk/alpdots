@@ -85,6 +85,12 @@ is_laptop() {
 
 LOCAL_WAYBAR="$DOTS/config/waybar/local.jsonc"
 if is_laptop; then
+  # Older installs wrote a modules-right list there, which the per-output bars
+  # now override, so the battery vanished. Replace those (with a backup).
+  if [[ -e "$LOCAL_WAYBAR" ]] && ! grep -q '"group/laptop"' "$LOCAL_WAYBAR"; then
+    mv "$LOCAL_WAYBAR" "$LOCAL_WAYBAR.bak-$STAMP"
+    echo "backup: $LOCAL_WAYBAR -> $LOCAL_WAYBAR.bak-$STAMP (outdated format)"
+  fi
   if [[ -e "$LOCAL_WAYBAR" ]]; then
     echo "laptop: $LOCAL_WAYBAR already exists, leaving it alone"
   else
