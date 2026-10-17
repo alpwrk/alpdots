@@ -22,6 +22,8 @@ PKGS=(
   grim slurp wl-clipboard brightnessctl playerctl wireplumber
   polkit-gnome pavucontrol blueman network-manager-applet
   python-gobject gtk4 gtk4-layer-shell
+  oh-my-zsh-git zsh-autosuggestions zsh-syntax-highlighting
+  yazi ffmpeg 7zip jq poppler fd ripgrep fzf zoxide
   ttf-jetbrains-mono-nerd ttf-bigblueterminal-nerd
 )
 
@@ -50,6 +52,7 @@ link() {
 for dir in "$DOTS"/config/*; do
   link "$dir" "$CONFIG/$(basename "$dir")"
 done
+link "$DOTS/home/.zshrc" "$HOME/.zshrc"
 
 # Laptop = a system battery (scope Device would be e.g. a wireless mouse).
 # Puts the battery module at the far right of waybar via the gitignored local.jsonc.
