@@ -11,6 +11,7 @@ PKGS=(
   swayfx swaybg waybar rofi mako wlogout swaylock-effects ghostty
   grim slurp wl-clipboard brightnessctl playerctl wireplumber
   polkit-gnome pavucontrol blueman network-manager-applet
+  python-gobject gtk4 gtk4-layer-shell
   ttf-jetbrains-mono-nerd
 )
 
@@ -39,6 +40,40 @@ link() {
 for dir in "$DOTS"/config/*; do
   link "$dir" "$CONFIG/$(basename "$dir")"
 done
+
+# Laptop = a system battery (scope Device would be e.g. a wireless mouse).
+# Puts the battery module at the far right of waybar via the gitignored local.jsonc.
+is_laptop() {
+  local ps
+  for ps in /sys/class/power_supply/*; do
+    [[ -r "$ps/type" && "$(<"$ps/type")" == Battery ]] || continue
+    [[ "$(cat "$ps/scope" 2>/dev/null)" == Device ]] && continue
+    return 0
+  done
+  return 1
+}
+
+LOCAL_WAYBAR="$DOTS/config/waybar/local.jsonc"
+if is_laptop; then
+  if [[ -e "$LOCAL_WAYBAR" ]]; then
+    echo "laptop: $LOCAL_WAYBAR already exists, leaving it alone"
+  else
+    cat > "$LOCAL_WAYBAR" <<'JSON'
+// Written by install.sh because this machine has a battery. Not tracked by git.
+{
+  "modules-right": ["group/traydrawer", "pulseaudio", "clock", "battery"]
+}
+JSON
+    echo "laptop: battery module added to waybar"
+  fi
+fi
+
+# Initial wallpaper for bgswitch, the sway config reads it from here
+CACHE="$HOME/.cache/bgswitch"
+if [[ ! -e "$CACHE/current" ]]; then
+  mkdir -p "$CACHE"
+  ln -sfn "$DOTS/config/sway/wallpaper/fogwoods.jpg" "$CACHE/current"
+fi
 
 mkdir -p "$HOME/Pictures/Screenshots"
 echo "Done. Log into sway (or press Super+Shift+C if you're already in it)."

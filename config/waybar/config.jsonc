@@ -7,7 +7,9 @@
 
   "modules-left": ["sway/workspaces", "custom/blank"],
   "modules-center": ["sway/window"],
-  "modules-right": ["group/traydrawer", "pulseaudio", "clock"],
+  // modules-right lives in includes: local.jsonc (machine-specific, written by
+  // install.sh on laptops, gitignored) wins over defaults.jsonc.
+  "include": ["~/.config/waybar/local.jsonc", "~/.config/waybar/defaults.jsonc"],
 
   "sway/workspaces": {
     "on-click": "activate",
@@ -69,6 +71,16 @@
   "clock": {
     "format": "{:%H:%M  %e-%m-%y}",
     "tooltip": false
+  },
+
+  // Only shown on laptops, see install.sh
+  "battery": {
+    "format": "{icon} {capacity}%",
+    "format-charging": "󰂄 {capacity}%",
+    "format-plugged": "󰚥 {capacity}%",
+    "format-icons": ["󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"],
+    "states": { "warning": 20, "critical": 10 },
+    "tooltip-format": "{timeTo}"
   },
 
   "network": {

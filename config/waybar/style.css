@@ -38,6 +38,20 @@ window#waybar {
   margin-left: 12px;
 }
 
+#battery {
+  margin-left: 12px;
+}
+
+#battery.warning:not(.charging) {
+  opacity: 0.7;
+}
+
+#battery.critical:not(.charging) {
+  color: @background;
+  background-color: @foreground;
+  padding: 0 4px;
+}
+
 #workspaces button {
   all: initial;
   transition: all 90ms ease-in-out;

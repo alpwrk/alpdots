@@ -1,0 +1,225 @@
+#!/usr/bin/env python3
+# Alt-Tab style wallpaper switcher for sway (GTK4 + layer-shell).
+#
+# Keys: Tab/Shift+Tab, ←/→, h/l, j/k = select, Enter = set, Esc = cancel.
+#       Pressing AltGr+# again while it's open = next.
+# Wallpapers come from ~/.config/sway/wallpaper and ~/Pictures/wallpapers.
+# The chosen one is symlinked to ~/.cache/bgswitch/current, which the sway
+# config points at, so it survives a reload.
+
+import os
+import sys
+
+# gtk4-layer-shell has to be loaded before libwayland, otherwise you get a
+# normal window instead of an overlay.
+LS_LIB = "/usr/lib/libgtk4-layer-shell.so"
+if LS_LIB not in os.environ.get("LD_PRELOAD", ""):
+    os.environ["LD_PRELOAD"] = (LS_LIB + " " + os.environ.get("LD_PRELOAD", "")).strip()
+    # cairo instead of gl/vulkan: the GL renderer on Nvidia let old frames show
+    # through (ghost text/lines behind the panel), Vulkan spams warnings.
+    os.environ.setdefault("GSK_RENDERER", "cairo")
+    os.execv(sys.executable, [sys.executable] + sys.argv)
+
+import hashlib
+import subprocess
+
+import gi
+
+gi.require_version("Gtk", "4.0")
+gi.require_version("Gdk", "4.0")
+gi.require_version("Gtk4LayerShell", "1.0")
+gi.require_version("GdkPixbuf", "2.0")
+from gi.repository import Gdk, GdkPixbuf, Gio, GLib, Gtk  # noqa: E402
+from gi.repository import Gtk4LayerShell as LayerShell  # noqa: E402
+
+WALL_DIRS = [os.path.expanduser(d) for d in ("~/.config/sway/wallpaper", "~/Pictures/wallpapers")]
+CACHE = os.path.expanduser("~/.cache/bgswitch")
+CURRENT = os.path.join(CACHE, "current")
+THUMB_W, THUMB_H = 200, 112
+EXTS = (".png", ".jpg", ".jpeg", ".webp")
+
+# Same palette as rofi/mono.rasi
+CSS = b"""
+window { background: transparent; }
+.panel {
+    background: rgba(13,13,13,0.8);
+    border: 2px solid #2b2b2b;
+    border-radius: 2px;
+    padding: 18px;
+}
+.thumb {
+    padding: 6px;
+    border: 2px solid transparent;
+    border-radius: 2px;
+}
+.thumb.selected { border-color: #ffffff; background: #1f1f1f; }
+.thumb.current .name { color: #ffffff; }
+.name {
+    font-family: "JetBrainsMono Nerd Font";
+    font-size: 9pt;
+    color: #8a8a8a;
+    margin-top: 6px;
+}
+.title {
+    font-family: "JetBrainsMono Nerd Font";
+    font-size: 10pt;
+    color: #e6e6e6;
+    margin-bottom: 12px;
+}
+"""
+
+
+def thumbnail(path):
+    """Cached thumbnail, regenerated when the original is newer."""
+    key = hashlib.sha1(path.encode()).hexdigest()
+    thumb = os.path.join(CACHE, "thumbs", key + ".png")
+    if not os.path.exists(thumb) or os.path.getmtime(thumb) < os.path.getmtime(path):
+        os.makedirs(os.path.dirname(thumb), exist_ok=True)
+        src = GdkPixbuf.Pixbuf.new_from_file(path)
+        # "fill": scale to the target size and crop centered
+        scale = max(THUMB_W / src.get_width(), THUMB_H / src.get_height())
+        w, h = round(src.get_width() * scale), round(src.get_height() * scale)
+        scaled = src.scale_simple(w, h, GdkPixbuf.InterpType.BILINEAR)
+        scaled.new_subpixbuf((w - THUMB_W) // 2, (h - THUMB_H) // 2, THUMB_W, THUMB_H).savev(thumb, "png", [], [])
+    return Gdk.Texture.new_from_filename(thumb)
+
+
+def current_wallpaper():
+    if not os.path.exists(CURRENT):
+        return None
+    return os.path.realpath(CURRENT)
+
+
+def set_wallpaper(path):
+    os.makedirs(CACHE, exist_ok=True)
+    tmp = CURRENT + ".tmp"
+    if os.path.lexists(tmp):
+        os.remove(tmp)
+    os.symlink(path, tmp)
+    os.replace(tmp, CURRENT)
+    subprocess.Popen(["swaymsg", "output", "*", "bg", path, "fill"], stdout=subprocess.DEVNULL)
+
+
+class Switcher(Gtk.Application):
+    def __init__(self):
+        super().__init__(application_id="de.alpwrk.bgswitch")
+        self.win = None
+
+    def do_activate(self):
+        # Second call (AltGr+# again) -> step forward like Alt+Tab
+        if self.win:
+            self.move(1)
+            return
+
+        # realpath dedupes the repo wallpapers if they're also in ~/Pictures/wallpapers
+        self.walls = sorted({
+            os.path.realpath(os.path.join(d, f))
+            for d in WALL_DIRS if os.path.isdir(d)
+            for f in os.listdir(d) if f.lower().endswith(EXTS)
+        }, key=os.path.basename)
+        if not self.walls:
+            self.quit()
+            return
+
+        provider = Gtk.CssProvider()
+        provider.load_from_data(CSS)
+        Gtk.StyleContext.add_provider_for_display(
+            Gdk.Display.get_default(), provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+        )
+
+        self.win = Gtk.ApplicationWindow(application=self)
+        LayerShell.init_for_window(self.win)
+        LayerShell.set_layer(self.win, LayerShell.Layer.OVERLAY)
+        LayerShell.set_keyboard_mode(self.win, LayerShell.KeyboardMode.EXCLUSIVE)
+        LayerShell.set_namespace(self.win, "bgswitch")
+
+        panel = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, css_classes=["panel"])
+        self.title = Gtk.Label(css_classes=["title"])
+        panel.append(self.title)
+
+        row = Gtk.Box(spacing=8)
+        cur = current_wallpaper()
+        self.items = []
+        for path in self.walls:
+            box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, css_classes=["thumb"])
+            pic = Gtk.Picture.new_for_paintable(thumbnail(path))
+            pic.set_size_request(THUMB_W, THUMB_H)
+            pic.set_can_shrink(False)
+            box.append(pic)
+            name = os.path.splitext(os.path.basename(path))[0]
+            label = Gtk.Label(label=name, css_classes=["name"], max_width_chars=22, ellipsize=3)
+            box.append(label)
+            if path == cur:
+                box.add_css_class("current")
+            click = Gtk.GestureClick()
+            click.connect("released", lambda *_, i=len(self.items): self.apply(i))
+            box.add_controller(click)
+            row.append(box)
+            self.items.append(box)
+
+        self.scroller = Gtk.ScrolledWindow(
+            child=row,
+            vscrollbar_policy=Gtk.PolicyType.NEVER,
+            hscrollbar_policy=Gtk.PolicyType.EXTERNAL,
+            propagate_natural_width=True,
+            propagate_natural_height=True,
+            max_content_width=1600,
+        )
+        panel.append(self.scroller)
+        self.win.set_child(panel)
+
+        keys = Gtk.EventControllerKey()
+        keys.connect("key-pressed", self.on_key)
+        self.win.add_controller(keys)
+
+        # Like Alt+Tab: start on the next entry right away
+        start = self.walls.index(cur) if cur in self.walls else -1
+        self.sel = 0
+        self.select((start + 1) % len(self.items))
+        self.win.present()
+
+    def select(self, i):
+        self.items[self.sel].remove_css_class("selected")
+        self.sel = i
+        item = self.items[i]
+        item.add_css_class("selected")
+        self.title.set_label(f"󰸉  {os.path.basename(self.walls[i])}   [{i + 1}/{len(self.items)}]")
+        # Scroll the selected thumbnail into view
+        adj = self.scroller.get_hadjustment()
+        x = i * (THUMB_W + 12 + 8)
+        if x < adj.get_value():
+            adj.set_value(x)
+        elif x + THUMB_W + 12 > adj.get_value() + adj.get_page_size():
+            adj.set_value(x + THUMB_W + 12 - adj.get_page_size())
+
+    def move(self, d):
+        self.select((self.sel + d) % len(self.items))
+
+    def apply(self, i):
+        set_wallpaper(self.walls[i])
+        self.quit()
+
+    def on_key(self, _ctrl, keyval, _code, state):
+        shift = state & Gdk.ModifierType.SHIFT_MASK
+        name = Gdk.keyval_name(keyval)
+        if name in ("Escape", "q"):
+            self.quit()
+        elif name in ("Return", "KP_Enter", "space"):
+            self.apply(self.sel)
+        elif name == "ISO_Left_Tab" or (name == "Tab" and shift):
+            self.move(-1)
+        elif name in ("Tab", "Right", "l", "j", "Down"):
+            self.move(1)
+        elif name in ("Left", "h", "k", "Up"):
+            self.move(-1)
+        elif name == "Home":
+            self.select(0)
+        elif name == "End":
+            self.select(len(self.items) - 1)
+        else:
+            return False
+        return True
+
+
+if __name__ == "__main__":
+    sys.exit(Switcher().run(None))

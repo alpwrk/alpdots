@@ -6,7 +6,8 @@ set $right l
 set $term ghostty
 set $menu rofi -m -1 -show drun
 
-output * bg ~/.config/sway/wallpaper/fogwoods.jpg fill
+# Symlink to the wallpaper picked with bgswitch (AltGr + #), created by install.sh
+output * bg ~/.cache/bgswitch/current fill
 
 input type:keyboard {
 	xkb_layout de
@@ -17,6 +18,8 @@ bindsym $mod+Return exec $term
 bindsym $mod+Shift+q kill
 bindsym $mod+w kill
 bindsym Mod1+space exec $menu
+# Wallpaper switcher. bindcode because AltGr+# gives ’ instead of numbersign on de
+bindcode Mod5+51 exec ~/.config/sway/scripts/bgswitch
 floating_modifier $mod normal
 bindsym $mod+Shift+c exec pkill -x waybar; reload
 bindsym $mod+Shift+e exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -B 'Yes, exit sway' 'swaymsg exit'
@@ -106,6 +109,8 @@ client.focused_inactive #808080 #808080 #808080 #808080 #808080
 client.unfocused #808080 #808080 #808080 #808080 #808080
 gaps inner 3
 gaps outer 3
+
+focus_on_window_activation focus
 
 for_window [app_id="flameshot"] border pixel 0, floating enable, fullscreen disable, move absolute position 0 0
 

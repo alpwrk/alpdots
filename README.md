@@ -11,6 +11,7 @@ A minimal monochrome Sway rice: SwayFX blur, a transparent Waybar, a mono Rofi l
 | Power menu   | Wlogout                 |
 | Lockscreen   | Swaylock-effects        |
 | Terminal     | Ghostty                 |
+| Wallpaper    | bgswitch (GTK4 overlay) |
 | Font         | JetBrainsMono Nerd Font |
 
 ## Install
@@ -25,6 +26,8 @@ cd ~/alpdots
 
 The script installs the packages and symlinks every folder in `config/` into `~/.config`. Any configs you already have get renamed to `<name>.bak-<timestamp>`, so nothing is lost.
 
+On laptops (detected by a system battery in `/sys/class/power_supply`) it also writes `config/waybar/local.jsonc`, which adds the battery module at the far right of the bar. That file isn't tracked by git, so you can tweak it per machine.
+
 If you're on a different distro or want to install the packages yourself:
 
 ```sh
@@ -36,7 +39,7 @@ If you're on a different distro or want to install the packages yourself:
 All programs this rice uses, in one command (`swayfx`, `wlogout` and `swaylock-effects` are in the AUR):
 
 ```sh
-yay -S --needed swayfx swaybg waybar rofi mako wlogout swaylock-effects ghostty grim slurp wl-clipboard brightnessctl playerctl wireplumber polkit-gnome pavucontrol blueman network-manager-applet ttf-jetbrains-mono-nerd
+yay -S --needed swayfx swaybg waybar rofi mako wlogout swaylock-effects ghostty grim slurp wl-clipboard brightnessctl playerctl wireplumber polkit-gnome pavucontrol blueman network-manager-applet python-gobject gtk4 gtk4-layer-shell ttf-jetbrains-mono-nerd
 ```
 
 Then log into Sway. If you're already in Sway, press `Super + Shift + C`.
@@ -65,6 +68,7 @@ cd ~/alpdots && git pull
 | `Super + Shift + Space`      | Toggle floating                 |
 | `Super + R`                  | Resize mode                     |
 | `Super + AltGr + ,`          | Toggle Waybar                   |
+| `AltGr + #`                  | Wallpaper switcher (bgswitch)   |
 | `Super + Shift + C`          | Reload Sway and Waybar          |
 | `Super + Shift + E`          | Exit Sway                       |
 | `Print`                      | Screenshot area to clipboard    |
@@ -77,7 +81,8 @@ Hover the right edge of the bar, just left of the volume, to slide out the tray,
 
 - **Keyboard layout:** the config uses `de`. Change `xkb_layout` in `config/sway/config`.
 - **Monitors:** Sway picks your monitor's preferred mode. To set a refresh rate, add e.g. `output DP-1 mode 1920x1080@144Hz` (list outputs with `swaymsg -t get_outputs`).
-- **Wallpaper:** drop an image into `config/sway/wallpaper/` and update the `output * bg` line in `config/sway/config` (and `image=` in `config/swaylock/config` for the lockscreen).
+- **Wallpaper:** press `AltGr + #` to open bgswitch, an Alt-Tab style picker. `Tab`/arrows/`h j k l` select, `Enter` sets, `Esc` cancels, and pressing `AltGr + #` again while it's open steps forward. It lists images from `config/sway/wallpaper/` and `~/Pictures/wallpapers/`, and the choice is kept as a symlink in `~/.cache/bgswitch/current`. For the lockscreen, change `image=` in `config/swaylock/config`.
+- **Battery module:** to add or remove it by hand, create or delete `config/waybar/local.jsonc` (see `config/waybar/defaults.jsonc` for the default module list).
 - **SwayFX effects:** blur, shadows and rounded corners only apply after a full Sway restart (log out and back in), not on reload.
 
 ## Uninstall
