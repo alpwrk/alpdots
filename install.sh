@@ -3,6 +3,16 @@
 # Existing configs are moved to <name>.bak-<timestamp> first.
 set -euo pipefail
 
+cat <<'BANNER'
+         __          __      __
+  ____ _/ /___  ____/ /___  / /______
+ / __ `/ / __ \/ __  / __ \/ __/ ___/
+/ /_/ / / /_/ / /_/ / /_/ / /_(__  )
+\__,_/_/ .___/\__,_/\____/\__/____/
+      /_/
+
+BANNER
+
 DOTS="$(cd "$(dirname "$0")" && pwd)"
 CONFIG="${XDG_CONFIG_HOME:-$HOME/.config}"
 STAMP="$(date +%Y%m%d_%H%M%S)"
