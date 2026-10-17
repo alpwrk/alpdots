@@ -1,1 +1,2 @@
+// Just pulls in the theme; modi and display names are set in mono.rasi.
 @theme "~/.config/rofi/mono.rasi"

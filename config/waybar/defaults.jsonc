@@ -1,5 +1,0 @@
-// Default right side of the bar. config/waybar/local.jsonc overrides it when
-// present (install.sh writes one with the battery module on laptops).
-{
-  "modules-right": ["group/traydrawer", "pulseaudio", "clock"]
-}

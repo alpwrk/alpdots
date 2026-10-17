@@ -1,113 +1,65 @@
-{
-  "reload_style_on_change": true,
-  "layer": "top",
-  "position": "top",
-  "spacing": 0,
-  "height": 30,
-
-  "modules-left": ["sway/workspaces", "custom/blank"],
-  "modules-center": ["sway/window"],
-  // modules-right lives in includes: local.jsonc (machine-specific, written by
-  // install.sh on laptops, gitignored) wins over defaults.jsonc.
-  "include": ["~/.config/waybar/local.jsonc", "~/.config/waybar/defaults.jsonc"],
-
-  "sway/workspaces": {
-    "on-click": "activate",
-    "format": "{icon}",
-    "persistent-workspaces": {
-      "1": [], "2": [], "3": [], "4": [], "5": [],
-      "6": [], "7": [], "8": [], "9": [], "10": []
+// One entry per monitor. Waybar builds a separate bar for each output and the
+// brightness module gets the output name as a fixed argument, because
+// on-scroll-* handlers never receive WAYBAR_OUTPUT_NAME (only exec does).
+// Shared settings live in config.common.jsonc and are pulled in via include;
+// keys defined here win over the included ones. local.jsonc is included first
+// so it wins over config.common.jsonc; install.sh writes it on laptops to fill
+// group/laptop with the battery module. It's gitignored.
+//
+// The brightness module updates optimistically: scrolling only bumps a cache
+// and signals this bar's own RT signal, so the label changes instantly and
+// only the matching monitor redraws. exec-on-event is off to avoid the exec /
+// scroll race; the slow panel write runs in a detached applier.
+[
+  {
+    "include": ["local.jsonc", "config.common.jsonc"],
+    "output": "HDMI-A-1",
+    "modules-right": [
+      "group/traydrawer",
+      "pulseaudio",
+      "custom/brightness-hdmi",
+      "mpris",
+      "group/laptop"
+    ],
+    "custom/brightness-hdmi": {
+      "exec": "~/.config/waybar/brightness.sh HDMI-A-1",
+      "return-type": "json",
+      "signal": 9,
+      "exec-on-event": false,
+      "on-scroll-up": "~/.config/waybar/brightness.sh HDMI-A-1 up",
+      "on-scroll-down": "~/.config/waybar/brightness.sh HDMI-A-1 down",
+      "tooltip": true
     }
   },
-
-  "custom/blank": {
-    "format": " ",
-    "tooltip": false
+  {
+    "include": ["local.jsonc", "config.common.jsonc"],
+    "output": "DP-1",
+    "modules-right": [
+      "group/traydrawer",
+      "pulseaudio",
+      "custom/brightness-dp",
+      "mpris",
+      "group/laptop"
+    ],
+    "custom/brightness-dp": {
+      "exec": "~/.config/waybar/brightness.sh DP-1",
+      "return-type": "json",
+      "signal": 11,
+      "exec-on-event": false,
+      "on-scroll-up": "~/.config/waybar/brightness.sh DP-1 up",
+      "on-scroll-down": "~/.config/waybar/brightness.sh DP-1 down",
+      "tooltip": true
+    }
   },
-
-  "sway/window": {
-    "format": "{title}",
-    "max-length": 60,
-    "tooltip": false
-  },
-
-  // Hover the invisible arrow to slide out tray, DND, network and bluetooth
-  "group/traydrawer": {
-    "orientation": "inherit",
-    "drawer": {
-      "transition-duration": 500,
-      "transition-left-to-right": false,
-      "children-class": "traydrawer-item"
-    },
-    "modules": [
-      "custom/trayarrow",
-      "tray",
-      "custom/notification-silencing-indicator",
-      "network",
-      "bluetooth"
+  {
+    // Every other output (laptop panel, other monitors): no DDC brightness
+    "include": ["local.jsonc", "config.common.jsonc"],
+    "output": ["!HDMI-A-1", "!DP-1", "*"],
+    "modules-right": [
+      "group/traydrawer",
+      "pulseaudio",
+      "mpris",
+      "group/laptop"
     ]
-  },
-
-  "custom/trayarrow": {
-    "format": "&lt;",
-    "tooltip": true,
-    "tooltip-format": "Tray Icons"
-  },
-
-  "tray": {
-    "icon-size": 13,
-    "spacing": 6
-  },
-
-  "pulseaudio": {
-    "format": "󰕾 {volume}% ",
-    "format-muted": "󰝟 MUTE ",
-    "tooltip-format": "Playing at {volume}%",
-    "scroll-step": 5,
-    "on-click": "pavucontrol",
-    "on-click-right": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
-  },
-
-  "clock": {
-    "format": "{:%H:%M  %e-%m-%y}",
-    "tooltip": false
-  },
-
-  // Only shown on laptops, see install.sh
-  "battery": {
-    "format": "{icon} {capacity}%",
-    "format-charging": "󰂄 {capacity}%",
-    "format-plugged": "󰚥 {capacity}%",
-    "format-icons": ["󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"],
-    "states": { "warning": 20, "critical": 10 },
-    "tooltip-format": "{timeTo}"
-  },
-
-  "network": {
-    "format": "{icon}",
-    "format-wifi": "{icon}",
-    "format-ethernet": "󰌘",
-    "format-disconnected": "󰤮",
-    "format-icons": ["󰤯", "󰤟", "󰤢", "󰤥", "󰤨"],
-    "interval": 3,
-    "spacing": 1,
-    "on-click": "nm-connection-editor",
-    "tooltip": false
-  },
-
-  "bluetooth": {
-    "format": "󰂯",
-    "format-disabled": "󰂲",
-    "format-connected": "",
-    "format-no-controller": "",
-    "tooltip-format": "Devices connected: {num_connections}",
-    "on-click": "blueman-manager"
-  },
-
-  "custom/notification-silencing-indicator": {
-    "exec": "if makoctl mode | grep -q do-not-disturb; then echo '{\"text\":\"󰂛\",\"class\":\"active\"}'; else echo '{\"text\":\"󰂚\"}'; fi",
-    "on-click": "makoctl mode -t do-not-disturb",
-    "signal": 10,
-    "return-type": "json"
   }
-}
+]

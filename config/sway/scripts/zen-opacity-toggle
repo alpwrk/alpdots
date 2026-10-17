@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+state="${XDG_RUNTIME_DIR:-/tmp}/zen-opacity-state"
+if [ "$(cat "$state" 2>/dev/null)" = "opaque" ]; then
+    swaymsg '[app_id="zen"] opacity set 0.7' >/dev/null
+    echo transparent > "$state"
+else
+    swaymsg '[app_id="zen"] opacity set 1.0' >/dev/null
+    echo opaque > "$state"
+fi

@@ -19,8 +19,8 @@ STAMP="$(date +%Y%m%d_%H%M%S)"
 
 PKGS=(
   swayfx swaybg waybar rofi mako wlogout swaylock-effects ghostty zsh
-  grim slurp wl-clipboard brightnessctl playerctl wireplumber
-  polkit-gnome pavucontrol blueman network-manager-applet
+  grim slurp wayfreeze wl-clipboard libnotify brightnessctl playerctl wireplumber
+  polkit-gnome pavucontrol blueman network-manager-applet ddcutil
   python-gobject gtk4 gtk4-layer-shell
   oh-my-zsh-git zsh-autosuggestions zsh-syntax-highlighting
   fastfetch yazi ffmpeg 7zip jq poppler fd ripgrep fzf zoxide
@@ -74,7 +74,7 @@ if is_laptop; then
     cat > "$LOCAL_WAYBAR" <<'JSON'
 // Written by install.sh because this machine has a battery. Not tracked by git.
 {
-  "modules-right": ["group/traydrawer", "pulseaudio", "clock", "battery"]
+  "group/laptop": { "orientation": "inherit", "modules": ["battery"] }
 }
 JSON
     echo "laptop: battery module added to waybar"

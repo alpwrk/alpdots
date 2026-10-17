@@ -56,13 +56,14 @@ window#waybar {
   background-color: transparent;
 }
 
-/* Persistent but unused workspaces, see config.jsonc */
+/* Persistent but unused workspaces, see config.common.jsonc */
 #workspaces button.empty {
   opacity: 0.5;
 }
 
-/* Focused workspace and the one shown on each monitor get the inverted
-   white box. Placed after .empty so an on-screen but empty workspace is
+/* Focused workspace and the one currently shown on THIS monitor get the
+   inverted white box, so it stays even while the keyboard focus is on the
+   other monitor. Placed after .empty so an on-screen but empty workspace is
    not dimmed. */
 #workspaces button.focused,
 #workspaces button.visible {
@@ -78,17 +79,17 @@ window#waybar {
 
 /* --- Right side --- */
 
-#pulseaudio {
+#pulseaudio,
+#custom-brightness-hdmi,
+#custom-brightness-dp,
+#mpris {
   margin-left: 12px;
   margin-right: 4px;
 }
 
-#clock {
-  margin-left: 12px;
-}
-
 #battery {
   margin-left: 12px;
+  margin-right: 4px;
 }
 
 #battery.warning:not(.charging) {
@@ -133,10 +134,19 @@ window#waybar {
   margin-right: 6px;
 }
 
-/* --- Center --- */
+/* --- Spare modules, see the end of config.common.jsonc --- */
+
+#custom-omarchy {
+  margin-right: 0;
+}
 
 #window {
   font-size: 13px;
   opacity: 0.9;
 }
 
+#custom-update {
+  min-width: 12px;
+  margin: 0 3px;
+  font-size: 10px;
+}

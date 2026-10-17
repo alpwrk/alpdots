@@ -1,0 +1,181 @@
+{
+  // Shared bar config included by every per-output entry in config.jsonc.
+  // Each monitor gets its own entry there because module configs can't be
+  // scoped per output any other way; modules-right and the brightness module
+  // live next to the "output" key.
+
+  "reload_style_on_change": true,
+  "layer": "top",
+  "position": "top",
+  "spacing": 0,
+  "height": 30,
+
+  // --- Module layout ---
+  // Left: workspaces | Center: clock | Right: set per output
+  "modules-left": [
+    "sway/workspaces",
+    "custom/blank"
+  ],
+
+  "modules-center": [
+    "clock"
+  ],
+
+  // --- Left side ---
+
+  "sway/workspaces": {
+    "on-click": "activate",
+    "format": "{icon}",
+
+    // Workspaces 1-10 always visible on both bars; empty ones dimmed in
+    // style.css. 1-5 live on the left monitor, 6-10 on the right.
+    "persistent-workspaces": {
+      "1": [], "2": [], "3": [], "4": [], "5": [],
+      "6": [], "7": [], "8": [], "9": [], "10": []
+    }
+  },
+
+  // Spacer after the last workspace
+  "custom/blank": {
+    "format": " ",
+    "tooltip": false
+  },
+
+  // --- Center ---
+
+  "clock": {
+    "format": "{:%H:%M - %d-%m-%y}",
+    "tooltip": false
+  },
+
+  // --- Right side ---
+
+  // Tray collapses into this drawer; hovering it slides the modules inside out
+  // to the left (see transition-left-to-right). The arrow itself is styled
+  // invisible in style.css and only the padding keeps the drawer closed.
+  "group/traydrawer": {
+    "orientation": "inherit",
+    "drawer": {
+      "transition-duration": 500,
+      "transition-left-to-right": false,
+      "children-class": "traydrawer-item"
+    },
+    "modules": [
+      "custom/trayarrow",
+      "tray",
+      "custom/notification-silencing-indicator",
+      "network",
+      "bluetooth"
+    ]
+  },
+
+  "pulseaudio": {
+    "format": "󰕾 {volume}%",
+    "format-muted": "󰝟 MUTE",
+    "tooltip-format": "Playing at {volume}%",
+    "scroll-step": 5,
+    "on-click": "pavucontrol",
+    "on-click-right": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
+  },
+
+  // Now playing (any MPRIS player: Spotify, Firefox, ...). Only control is
+  // left click = play/pause (built in, targets the shown player); middle and
+  // right are no-ops, otherwise the module would skip tracks on them.
+  "mpris": {
+    "format": "{title} - {artist}",
+    "title-len": 40,
+    "artist-len": 20,
+    "on-click-middle": "",
+    "on-click-right": "",
+    "tooltip": false
+  },
+
+  // Far right. Empty here; local.jsonc (written by install.sh on laptops)
+  // puts the battery in.
+  "group/laptop": {
+    "orientation": "inherit",
+    "modules": []
+  },
+
+  "battery": {
+    "format": "{icon} {capacity}%",
+    "format-charging": "󰂄 {capacity}%",
+    "format-plugged": "󰚥 {capacity}%",
+    "format-icons": ["󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"],
+    "states": { "warning": 20, "critical": 10 },
+    "tooltip-format": "{timeTo}"
+  },
+
+  // --- Inside the tray drawer ---
+
+  // "<" as HTML entity since waybar formats are Pango markup
+  "custom/trayarrow": {
+    "format": "&lt;",
+    "tooltip": true,
+    "tooltip-format": "Tray Icons"
+  },
+
+  "tray": {
+    "icon-size": 13,
+    "spacing": 6
+  },
+
+  // Bell with a slash when mako is in do-not-disturb mode.
+  // Click toggles the mode, signal 10 refreshes it.
+  "custom/notification-silencing-indicator": {
+    "exec": "if makoctl mode | grep -q do-not-disturb; then echo '{\"text\":\"󰂛\",\"class\":\"active\"}'; else echo '{\"text\":\"󰂚\"}'; fi",
+    "on-click": "makoctl mode -t do-not-disturb",
+    "signal": 10,
+    "return-type": "json"
+  },
+
+  "network": {
+    "format": "{icon}",
+    "format-ethernet": "󰌘",
+    "format-disconnected": "󰤮",
+    "format-icons": ["󰤯", "󰤟", "󰤢", "󰤥", "󰤨"],
+    "interval": 3,
+    "on-click": "nm-connection-editor",
+    "tooltip": false
+  },
+
+  "bluetooth": {
+    "format": "󰂯",
+    "format-disabled": "󰂲",
+    "format-connected": "",
+    "format-no-controller": "",
+    "tooltip-format": "Devices connected: {num_connections}",
+    "on-click": "blueman-manager"
+  },
+
+  // --- Spare parts, not in any modules-* list above ---
+
+  // App launcher button: λ opens rofi (Super+D), right click opens a terminal.
+  "custom/omarchy": {
+    "format": "λ",
+    "on-click": "rofi -m -1 -show drun",
+    "on-click-right": "ghostty",
+    "tooltip": true,
+    "tooltip-format": "App Launcher\nSuper + D"
+  },
+
+  "sway/window": {
+    "format": "{title}",
+    "max-length": 60,
+    "tooltip": false
+  },
+
+  // Update counter for Arch. Only shows a number when updates exist.
+  "custom/update": {
+    "format": "",
+    "exec": "checkupdates 2>/dev/null | wc -l",
+    "on-click": "ghostty -e checkupdates",
+    "signal": 7,
+    "interval": 21600
+  },
+
+  // Brackets and separators for decoration
+  "custom/sep":   { "format": "︱", "tooltip": false },
+  "custom/bracl": { "format": "[", "tooltip": false },
+  "custom/bracr": { "format": "]", "tooltip": false }
+}

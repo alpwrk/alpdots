@@ -1,11 +1,16 @@
+// Mono theme for rofi: dark grey surfaces, white accent, no icons anywhere.
+// Goes with the waybar setup, same font, same idea.
+
 configuration {
     modi: "drun,run,window";
+    // Icons would break the text-only look
     show-icons: false;
     display-drun: " Apps";
     display-run: " Run";
     display-window: " Windows";
 }
 
+// Color palette. bg has a bit of transparency so the swayfx blur shows through.
 * {
     font: "JetBrainsMono Nerd Font 10";
     bg: #0d0d0dcc;
@@ -52,6 +57,7 @@ entry {
 listview {
     lines: 8;
     columns: 1;
+    // Shrink with fewer entries instead of keeping empty rows
     fixed-height: false;
     scrollbar: false;
     spacing: 4px;

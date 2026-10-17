@@ -111,12 +111,15 @@ class Switcher(Gtk.Application):
             self.move(1)
             return
 
-        # realpath dedupes the repo wallpapers if they're also in ~/Pictures/wallpapers
-        self.walls = sorted({
-            os.path.realpath(os.path.join(d, f))
-            for d in WALL_DIRS if os.path.isdir(d)
-            for f in os.listdir(d) if f.lower().endswith(EXTS)
-        }, key=os.path.basename)
+        # Deduped by filename, so a wallpaper in both folders shows up once
+        # (the copy in the first folder of WALL_DIRS wins)
+        walls = {}
+        for d in WALL_DIRS:
+            if os.path.isdir(d):
+                for f in os.listdir(d):
+                    if f.lower().endswith(EXTS):
+                        walls.setdefault(f, os.path.realpath(os.path.join(d, f)))
+        self.walls = [walls[f] for f in sorted(walls)]
         if not self.walls:
             self.quit()
             return

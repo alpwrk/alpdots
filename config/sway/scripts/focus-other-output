@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+cur=$(swaymsg -t get_outputs | jq -r 'map(select(.focused))[0].name')
+other=$(swaymsg -t get_outputs | jq -r --arg cur "$cur" \
+  'map(select(.active and .current_workspace != null and .name != $cur))[0].name')
+[ -n "$other" ] && [ "$other" != "null" ] && swaymsg focus output "$other"
