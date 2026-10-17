@@ -22,6 +22,8 @@ PKGS=(
   grim slurp wayfreeze wl-clipboard libnotify brightnessctl playerctl wireplumber
   polkit-gnome pavucontrol blueman network-manager-applet ddcutil
   python-gobject gtk4 gtk4-layer-shell
+  adw-gtk-theme breeze-icons capitaine-cursors noto-fonts
+  xdg-desktop-portal-gtk xdg-desktop-portal-wlr
   oh-my-zsh-git zsh-autosuggestions zsh-syntax-highlighting
   fastfetch yazi ffmpeg 7zip jq poppler fd ripgrep fzf zoxide
   ttf-jetbrains-mono-nerd ttf-bigblueterminal-nerd
@@ -53,6 +55,21 @@ for dir in "$DOTS"/config/*; do
   link "$dir" "$CONFIG/$(basename "$dir")"
 done
 link "$DOTS/home/.zshrc" "$HOME/.zshrc"
+link "$DOTS/gtk/gtk-3.0/settings.ini" "$CONFIG/gtk-3.0/settings.ini"
+link "$DOTS/gtk/gtk-4.0/settings.ini" "$CONFIG/gtk-4.0/settings.ini"
+
+# Dark mode for GTK/libadwaita apps, and for Qt apps through the GTK portal.
+# The settings.ini files above cover the same for apps that don't read gsettings.
+if command -v gsettings >/dev/null; then
+  gs() { gsettings set org.gnome.desktop.interface "$@" || true; }
+  gs color-scheme prefer-dark
+  gs gtk-theme adw-gtk3-dark
+  gs icon-theme breeze-dark
+  gs cursor-theme capitaine-cursors
+  gs cursor-size 24
+  gs font-name 'Noto Sans 10'
+  echo "theme: dark mode set"
+fi
 
 # Laptop = a system battery (scope Device would be e.g. a wireless mouse).
 # Puts the battery module at the far right of waybar via the gitignored local.jsonc.

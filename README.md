@@ -27,7 +27,7 @@ cd ~/alpdots
 ./install.sh
 ```
 
-The script installs the packages, symlinks every folder in `config/` into `~/.config` and `home/.zshrc` to `~/.zshrc`. Any configs you already have get renamed to `<name>.bak-<timestamp>`, so nothing is lost.
+The script installs the packages, symlinks every folder in `config/` into `~/.config`, `home/.zshrc` to `~/.zshrc` and the GTK `settings.ini` files from `gtk/`. It also sets dark mode via gsettings (`adw-gtk3-dark`, Breeze Dark icons, Capitaine cursors, Noto Sans), which Qt apps pick up through the GTK portal. Any configs you already have get renamed to `<name>.bak-<timestamp>`, so nothing is lost.
 
 On laptops (detected by a system battery in `/sys/class/power_supply`) it also writes `config/waybar/local.jsonc`, which puts the battery module at the far right of the bar. That file isn't tracked by git, so you can tweak it per machine.
 
@@ -44,7 +44,7 @@ If you're on a different distro or want to install the packages yourself:
 All programs this rice uses, in one command (`swayfx`, `wlogout`, `swaylock-effects`, `wayfreeze` and `oh-my-zsh-git` are in the AUR on plain Arch). Clicking the screenshot notification opens GIMP, install `gimp` if you want that.:
 
 ```sh
-yay -S --needed swayfx swaybg waybar rofi mako wlogout swaylock-effects ghostty grim slurp wayfreeze wl-clipboard libnotify brightnessctl playerctl wireplumber polkit-gnome pavucontrol blueman network-manager-applet ddcutil zsh oh-my-zsh-git zsh-autosuggestions zsh-syntax-highlighting fastfetch yazi ffmpeg 7zip jq poppler fd ripgrep fzf zoxide python-gobject gtk4 gtk4-layer-shell ttf-jetbrains-mono-nerd ttf-bigblueterminal-nerd
+yay -S --needed swayfx swaybg waybar rofi mako wlogout swaylock-effects ghostty grim slurp wayfreeze wl-clipboard libnotify brightnessctl playerctl wireplumber polkit-gnome pavucontrol blueman network-manager-applet ddcutil zsh oh-my-zsh-git zsh-autosuggestions zsh-syntax-highlighting fastfetch yazi ffmpeg 7zip jq poppler fd ripgrep fzf zoxide python-gobject gtk4 gtk4-layer-shell adw-gtk-theme breeze-icons capitaine-cursors noto-fonts xdg-desktop-portal-gtk xdg-desktop-portal-wlr ttf-jetbrains-mono-nerd ttf-bigblueterminal-nerd
 ```
 
 Then log into Sway. If you're already in Sway, press `Super + Shift + C`.
@@ -96,7 +96,7 @@ Hover the right edge of the bar, just left of the volume, to slide out the tray,
 
 ```sh
 for d in ~/alpdots/config/*; do rm ~/.config/$(basename "$d"); done
-rm ~/.zshrc
+rm ~/.zshrc ~/.config/gtk-3.0/settings.ini ~/.config/gtk-4.0/settings.ini
 ```
 
 Then rename your `.bak-*` folders back if you want your old configs.
