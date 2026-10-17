@@ -28,6 +28,8 @@ The script installs the packages and symlinks every folder in `config/` into `~/
 
 On laptops (detected by a system battery in `/sys/class/power_supply`) it also writes `config/waybar/local.jsonc`, which adds the battery module at the far right of the bar. That file isn't tracked by git, so you can tweak it per machine.
 
+It also makes zsh your login shell if it isn't already (`chsh` asks for your password).
+
 If you're on a different distro or want to install the packages yourself:
 
 ```sh
@@ -39,7 +41,7 @@ If you're on a different distro or want to install the packages yourself:
 All programs this rice uses, in one command (`swayfx`, `wlogout` and `swaylock-effects` are in the AUR):
 
 ```sh
-yay -S --needed swayfx swaybg waybar rofi mako wlogout swaylock-effects ghostty grim slurp wl-clipboard brightnessctl playerctl wireplumber polkit-gnome pavucontrol blueman network-manager-applet python-gobject gtk4 gtk4-layer-shell ttf-jetbrains-mono-nerd
+yay -S --needed swayfx swaybg waybar rofi mako wlogout swaylock-effects ghostty grim slurp wl-clipboard brightnessctl playerctl wireplumber polkit-gnome pavucontrol blueman network-manager-applet zsh python-gobject gtk4 gtk4-layer-shell ttf-jetbrains-mono-nerd
 ```
 
 Then log into Sway. If you're already in Sway, press `Super + Shift + C`.

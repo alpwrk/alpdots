@@ -8,7 +8,7 @@ CONFIG="${XDG_CONFIG_HOME:-$HOME/.config}"
 STAMP="$(date +%Y%m%d_%H%M%S)"
 
 PKGS=(
-  swayfx swaybg waybar rofi mako wlogout swaylock-effects ghostty
+  swayfx swaybg waybar rofi mako wlogout swaylock-effects ghostty zsh
   grim slurp wl-clipboard brightnessctl playerctl wireplumber
   polkit-gnome pavucontrol blueman network-manager-applet
   python-gobject gtk4 gtk4-layer-shell
@@ -73,6 +73,14 @@ CACHE="$HOME/.cache/bgswitch"
 if [[ ! -e "$CACHE/current" ]]; then
   mkdir -p "$CACHE"
   ln -sfn "$DOTS/config/sway/wallpaper/fogwoods.jpg" "$CACHE/current"
+fi
+
+# Make zsh the login shell if it isn't already (chsh asks for your password)
+ZSH="$(command -v zsh || true)"
+if [[ -z "$ZSH" ]]; then
+  echo "zsh not found, keeping your current shell" >&2
+elif [[ "$(basename "$(getent passwd "$USER" | cut -d: -f7)")" != zsh ]]; then
+  chsh -s "$ZSH" && echo "shell: switched to zsh (takes effect on next login)"
 fi
 
 mkdir -p "$HOME/Pictures/Screenshots"
