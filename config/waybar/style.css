@@ -1,21 +1,36 @@
+/* Monochrome bar: black background, white text, no borders. All colors are
+   defined once at the top so a theme swap is a two-line change. */
+
 @define-color background rgba(0, 0, 0, 0.5);
 @define-color foreground #ffffff;
+
+/* --- Global reset --- */
+/* Waybar inherits a lot of GTK default styling, so flatten everything:
+   no borders, no margins, no padding. min-height: 0 is the important one,
+   without it the bar height fights with the config. */
 
 * {
   background-color: transparent;
   color: @foreground;
-  border: 0px solid alpha(@foreground, 0.6);
+
+  border: none;
   border-radius: 0;
+
   min-height: 0;
   margin: 0;
   padding: 0;
-  font-family: 'JetBrainsMono Nerd Font';
-  font-size: 14px;
+
+  font-family: 'BigBlueTermPlus Nerd Font';
+  font-size: 13px;
 }
 
 window#waybar {
   background-color: @background;
 }
+
+/* --- Layout spacing --- */
+/* Everything else is zero from the reset above, the modules only get what
+   they need on their outer edges. */
 
 .modules-left {
   margin-left: 8px;
@@ -25,9 +40,43 @@ window#waybar {
   margin-right: 8px;
 }
 
-#tray {
-  margin-right: 4px;
+/* --- Left side --- */
+
+#workspaces button {
+  all: initial;
+  transition: all 90ms ease-in-out;
+  padding: 0 6px;
+  min-width: 2px;
+  border: none;
+  outline: none;
+  box-shadow: none;
 }
+
+#workspaces button label {
+  background-color: transparent;
+}
+
+/* Persistent but unused workspaces, see config.jsonc */
+#workspaces button.empty {
+  opacity: 0.5;
+}
+
+/* Focused workspace and the one shown on each monitor get the inverted
+   white box. Placed after .empty so an on-screen but empty workspace is
+   not dimmed. */
+#workspaces button.focused,
+#workspaces button.visible {
+  background-color: @foreground;
+  color: @background;
+  opacity: 1;
+}
+
+#workspaces button.focused label,
+#workspaces button.visible label {
+  color: @background;
+}
+
+/* --- Right side --- */
 
 #pulseaudio {
   margin-left: 12px;
@@ -52,31 +101,27 @@ window#waybar {
   padding: 0 4px;
 }
 
-#workspaces button {
-  all: initial;
-  transition: all 90ms ease-in-out;
-  padding: 0 6px;
-  min-width: 2px;
+/* --- Tray drawer --- */
+
+#group-traydrawer {
+  background: transparent;
 }
 
-#workspaces button.focused,
-#workspaces button.visible {
-  background-color: @foreground;
-  color: @background;
-  border-radius: 4px;
+/* The arrow is invisible; its padding is what you hover to open the drawer */
+#custom-trayarrow {
+  color: transparent;
+  font-size: 12px;
+  padding: 0 4px;
+  margin-right: 8px;
 }
 
-#workspaces button.focused label,
-#workspaces button.visible label {
-  color: @background;
+#tray {
+  margin-right: 4px;
 }
 
-#workspaces button.empty {
-  opacity: 0.5;
-}
-
-#workspaces button.visible {
-  opacity: 1;
+#custom-notification-silencing-indicator {
+  margin-right: 2px;
+  min-width: 15px;
 }
 
 #network {
@@ -88,20 +133,10 @@ window#waybar {
   margin-right: 6px;
 }
 
+/* --- Center --- */
+
 #window {
   font-size: 13px;
   opacity: 0.9;
 }
 
-/* Invisible arrow; its padding is the hover area that opens the drawer */
-#custom-trayarrow {
-  color: transparent;
-  font-size: 12px;
-  padding: 0 4px;
-  margin-right: 8px;
-}
-
-#custom-notification-silencing-indicator {
-  margin-right: 2px;
-  min-width: 15px;
-}

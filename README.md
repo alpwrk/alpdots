@@ -12,7 +12,7 @@ A minimal monochrome Sway rice: SwayFX blur, a transparent Waybar, a mono Rofi l
 | Lockscreen   | Swaylock-effects        |
 | Terminal     | Ghostty                 |
 | Wallpaper    | bgswitch (GTK4 overlay) |
-| Font         | JetBrainsMono Nerd Font |
+| Font         | BigBlueTerm Nerd Font (bar, terminal), JetBrainsMono Nerd Font (rest) |
 
 ## Install
 
@@ -41,7 +41,7 @@ If you're on a different distro or want to install the packages yourself:
 All programs this rice uses, in one command (`swayfx`, `wlogout` and `swaylock-effects` are in the AUR):
 
 ```sh
-yay -S --needed swayfx swaybg waybar rofi mako wlogout swaylock-effects ghostty grim slurp wl-clipboard brightnessctl playerctl wireplumber polkit-gnome pavucontrol blueman network-manager-applet zsh python-gobject gtk4 gtk4-layer-shell ttf-jetbrains-mono-nerd
+yay -S --needed swayfx swaybg waybar rofi mako wlogout swaylock-effects ghostty grim slurp wl-clipboard brightnessctl playerctl wireplumber polkit-gnome pavucontrol blueman network-manager-applet zsh python-gobject gtk4 gtk4-layer-shell ttf-jetbrains-mono-nerd ttf-bigblueterminal-nerd
 ```
 
 Then log into Sway. If you're already in Sway, press `Super + Shift + C`.

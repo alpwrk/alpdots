@@ -1,6 +1,9 @@
 theme = Black Metal (Burzum)
 background-opacity = 0.5
 background-blur = 20
+font-family = BigBlueTerm437 Nerd Font Mono
 font-thicken = true
+shell-integration = zsh
+shell-integration-features = ssh-terminfo,ssh-env
 undo-timeout = 15s
 confirm-close-surface = false

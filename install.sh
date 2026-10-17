@@ -22,7 +22,7 @@ PKGS=(
   grim slurp wl-clipboard brightnessctl playerctl wireplumber
   polkit-gnome pavucontrol blueman network-manager-applet
   python-gobject gtk4 gtk4-layer-shell
-  ttf-jetbrains-mono-nerd
+  ttf-jetbrains-mono-nerd ttf-bigblueterminal-nerd
 )
 
 if [[ "${1:-}" != "--no-deps" ]]; then
