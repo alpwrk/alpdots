@@ -45,6 +45,8 @@ sudo service seatd start && sudo service dbus start
 sudo pw groupmod video -m "$USER"
 ```
 
+If `pkg` has no oh-my-posh, the shell uses a built-in zsh prompt that looks the same (`path (branch*) $`). To get oh-my-posh anyway, install it from [ohmyposh.dev](https://ohmyposh.dev/docs/installation/linux), it has FreeBSD builds.
+
 Some Linux-only bits don't work there: DDC/CI and backlight brightness (`ddcutil`, `brightnessctl`), the screen freeze while taking a screenshot (`wayfreeze`, screenshots still work) and Blueman.
 
 ### Other systems

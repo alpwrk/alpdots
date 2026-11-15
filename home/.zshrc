@@ -22,8 +22,24 @@ bindkey '^[[3~' delete-char
 bindkey '^[[1;5D' backward-word
 bindkey '^[[1;5C' forward-word
 
-# Prompt: oh-my-posh with the theme from config/oh-my-posh
-eval "$(oh-my-posh init zsh --config ~/.config/oh-my-posh/mytheme.omp.toml)"
+# Prompt: oh-my-posh with the theme from config/oh-my-posh. Where it isn't
+# installed (e.g. not in FreeBSD's pkg), a plain zsh prompt with the same look:
+# path (branch*) $   (* = uncommitted changes)
+if command -v oh-my-posh >/dev/null; then
+	eval "$(oh-my-posh init zsh --config ~/.config/oh-my-posh/mytheme.omp.toml)"
+else
+	autoload -Uz vcs_info add-zsh-hook
+	zstyle ':vcs_info:*' enable git
+	zstyle ':vcs_info:git:*' formats '(%b%m) '
+	zstyle ':vcs_info:git:*' actionformats '(%b%m) '
+	zstyle ':vcs_info:git*+set-message:*' hooks git-dirty
+	+vi-git-dirty() {
+		[[ -n "$(git status --porcelain 2>/dev/null | head -n 1)" ]] && hook_com[misc]='*'
+	}
+	add-zsh-hook precmd vcs_info
+	setopt prompt_subst
+	PROMPT='%F{white}%~ ${vcs_info_msg_0_}$%f '
+fi
 
 # y = yazi, but cd into the directory you were in when you quit it
 function y() {
@@ -35,10 +51,10 @@ function y() {
 }
 
 # fzf: Ctrl+R history, Ctrl+T files, Alt+C cd into dir
-source <(fzf --zsh)
+command -v fzf >/dev/null && source <(fzf --zsh 2>/dev/null)
 
 # zoxide: `z <part of dir>` / `zi` for interactive pick
-eval "$(zoxide init zsh)"
+command -v zoxide >/dev/null && eval "$(zoxide init zsh)"
 
 # Machine-specific stuff (PATHs, EDITOR, ...) goes here, it's not tracked by git
 [ -f "$HOME/.zshrc.local" ] && source "$HOME/.zshrc.local"
