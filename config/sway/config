@@ -9,7 +9,6 @@ set $down j
 set $up k
 set $right l
 set $term ghostty
-set $menu rofi -m -1 -show drun
 
 # --- Outputs / wallpaper ---
 # Get output names with: swaymsg -t get_outputs
@@ -60,21 +59,13 @@ input "1267:128:Elan_TrackPoint" {
 # --- Basics ---
     bindsym $mod+Return exec $term
     bindsym $mod+Shift+q kill
-    bindsym Mod1+space exec $menu
 
     # opencode in its own Ghostty window, slightly transparent
     bindsym $mod+Shift+o exec ghostty --gtk-single-instance=false --background-opacity=0.8 -e opencode
 
-    # Alt-Tab style wallpaper switcher
-    # AltGr+# (bindcode, because AltGr+# gives ’ instead of numbersign on de)
-    bindcode Mod5+51 exec ~/.config/sway/scripts/bgswitch
-
     # Hold $mod + left mouse button to drag windows, right button to resize.
     # Works for tiled windows too. Change normal to inverse to swap buttons.
     floating_modifier $mod normal
-
-    # Full restart of waybar so style changes actually apply
-    bindsym $mod+Shift+c exec pkill -x waybar; reload
 
     # Logout confirmation prompt
     bindsym $mod+Shift+e exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -B 'Yes, exit sway' 'swaymsg exit'
@@ -94,8 +85,6 @@ input "1267:128:Elan_TrackPoint" {
     # (only useful with a second monitor, see the HDMI-A-1 block above)
     # bindsym Mod1+x exec ~/.config/sway/scripts/focus-other-output
 
-# --- Custom Binds ---
-    bindsym $mod+Escape exec sh -c 'swaymsg seat seat0 hide_cursor 1; wlogout; pkill wlogout; swaymsg seat seat0 hide_cursor 0'
 # --- Move windows ---
     # Same as focus movement but with Shift added
     bindsym $mod+Shift+$left move left
@@ -174,14 +163,10 @@ mode "resize" {
 }
 bindsym $mod+r mode "resize"
 
-# --- Bar ---
-# script to toggle the Bar
-bindsym $mod+Mod5+comma exec ~/.config/sway/scripts/toggle-waybar.sh
-
-# sway just hands the bar over to waybar
-bar {
-    swaybar_command waybar
-}
+# --- Shell ---
+# Bar, launcher, notifications, power menu and wallpaper switcher, with
+# their keybinds. Kept in one file so the whole shell can be swapped out.
+include ~/.config/sway/shell.conf
 
 # --- Look ---
 # No borders; the colors only matter if you turn borders back on
@@ -255,11 +240,12 @@ shadows disable
 default_dim_inactive 0.2
 animation_duration_ms 250
 
-# Waybar must not get the corner radius/shadow treatment, it sits flush at the top
+# Waybar must not get the corner radius/shadow treatment, it sits flush at the top.
+# No blur: the bar color comes from accent.css (see waybar/style.css).
 # NOTE: Do not run live `swaymsg layer_effects ... reset` on this bar - that
 # segfaults libscenefx (see coredump from 2026-09-18) and kills the session.
 layer_effects "waybar" {
     corner_radius 0;
     shadows disable;
-    blur enable;
+    blur disable;
 }
