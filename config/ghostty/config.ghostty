@@ -1,9 +1,12 @@
-theme = Black Metal (Burzum)
-background-opacity = 0.5
+theme = Black Metal (Venom)
+background-opacity = 0.9
 background-blur = 20
 font-family = BigBlueTerm437 Nerd Font Mono
-font-thicken = true
+font-size = 14
 shell-integration = zsh
 shell-integration-features = ssh-terminfo,ssh-env
 undo-timeout = 15s
 confirm-close-surface = false
+
+# Optional per-machine theme override (not tracked by git)
+config-file = ?auto/theme.ghostty

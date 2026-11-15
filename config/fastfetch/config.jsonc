@@ -2,7 +2,14 @@
   "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/master/doc/json_schema.json",
     "logo": {
       "type": "file",
-      "source": "~/.config/fastfetch/alp.txt"
+      "source": "~/.config/fastfetch/blackhole.txt",
+      "padding": {
+        "right": 1
+      },
+      "color": {
+        "1": "97", "2": "97", "3": "97", "4": "97", "5": "97",
+        "6": "97", "7": "97", "8": "97", "9": "97"
+      }
     },
   "display": {
     "stat": false,
@@ -12,10 +19,10 @@
     "hideCursor": false,
     "separator": ": ",
     "color": {
-      "keys": "",
-      "title": "",
-      "output": "",
-      "separator": ""
+      "keys": "97",
+      "title": "97",
+      "output": "97",
+      "separator": "97"
     },
     "brightColor": true,
     "duration": {
@@ -32,9 +39,9 @@
       "unit": "D",
       "ndigits": 1,
       "color": {
-        "green": "32",
-        "yellow": "93",
-        "red": "91"
+        "green": "97",
+        "yellow": "97",
+        "red": "97"
       },
       "spaceBeforeUnit": "default"
     },
@@ -45,9 +52,9 @@
       ],
       "ndigits": 0,
       "color": {
-        "green": "32",
-        "yellow": "93",
-        "red": "91"
+        "green": "97",
+        "yellow": "97",
+        "red": "97"
       },
       "spaceBeforeUnit": "default",
       "width": 0
@@ -64,7 +71,7 @@
         "rightElapsed": ""
       },
       "color": {
-        "elapsed": "auto",
+        "elapsed": "97",
         "total": "97",
         "border": "97"
       },
@@ -101,9 +108,9 @@
       "keyIcon": "",
       "fqdn": false,
       "color": {
-        "user": "",
-        "at": "",
-        "host": ""
+        "user": "97",
+        "at": "97",
+        "host": "97"
       }
     },
     {
