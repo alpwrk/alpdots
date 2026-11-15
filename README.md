@@ -19,7 +19,7 @@ A minimal monochrome Sway rice: borderless SwayFX windows with blur, a half-tran
 
 ## Install
 
-For Arch-based distros (Arch, CachyOS, EndeavourOS, …). You need an AUR helper (`yay` or `paru`).
+For Arch-based distros (Arch, CachyOS, EndeavourOS, …) with an AUR helper (`yay` or `paru`), and for FreeBSD (needs `sudo` or `doas`, packages come from `pkg`). The script is plain `sh`, so bash isn't required.
 
 ```sh
 git clone https://github.com/alpwrk/alpdots.git ~/alpdots
@@ -29,11 +29,25 @@ cd ~/alpdots
 
 The script installs the packages, symlinks every folder in `config/` into `~/.config`, `home/.zshrc` to `~/.zshrc` and the GTK `settings.ini` files from `gtk/`. It also sets dark mode via gsettings (`adw-gtk3-dark`, Breeze Dark icons, Capitaine cursors, Noto Sans), which Qt apps pick up through the GTK portal. Any configs you already have get renamed to `<name>.bak-<timestamp>`, so nothing is lost.
 
-On laptops (detected by a system battery in `/sys/class/power_supply`) it also writes `config/waybar/local.jsonc`, which puts the battery module at the far right of the bar. That file isn't tracked by git, so you can tweak it per machine.
+On laptops (detected by a system battery in `/sys/class/power_supply`, or `hw.acpi.battery.units` on FreeBSD) it also writes `config/waybar/local.jsonc`, which puts the battery module at the far right of the bar. That file isn't tracked by git, so you can tweak it per machine.
 
 It also writes `config/waybar/accent.css` with the default bar colors (half-transparent black). bgswitch overwrites it when you pick a bar color, so it's not tracked by git either.
 
 It also makes zsh your login shell if it isn't already (`chsh` asks for your password).
+
+### FreeBSD
+
+`./install.sh` installs the FreeBSD versions of the packages. Names `pkg` doesn't know are skipped with a warning (install those yourself or leave them out). At the end it prints the system setup sway needs, which it doesn't do for you:
+
+```sh
+sudo sysrc seatd_enable=YES dbus_enable=YES
+sudo service seatd start && sudo service dbus start
+sudo pw groupmod video -m "$USER"
+```
+
+Some Linux-only bits don't work there: DDC/CI and backlight brightness (`ddcutil`, `brightnessctl`), the screen freeze while taking a screenshot (`wayfreeze`, screenshots still work) and Blueman.
+
+### Other systems
 
 If you're on a different distro or want to install the packages yourself:
 
