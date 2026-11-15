@@ -22,8 +22,13 @@ import sys
 
 # gtk4-layer-shell has to be loaded before libwayland, otherwise you get a
 # normal window instead of an overlay.
-LS_LIB = "/usr/lib/libgtk4-layer-shell.so"
-if LS_LIB not in os.environ.get("LD_PRELOAD", ""):
+# /usr/local/lib is where FreeBSD puts it.
+LS_LIB = next(
+    (p for p in ("/usr/lib/libgtk4-layer-shell.so", "/usr/local/lib/libgtk4-layer-shell.so",
+                 "/usr/lib64/libgtk4-layer-shell.so") if os.path.exists(p)),
+    None,
+)
+if LS_LIB and LS_LIB not in os.environ.get("LD_PRELOAD", ""):
     os.environ["LD_PRELOAD"] = (LS_LIB + " " + os.environ.get("LD_PRELOAD", "")).strip()
     # cairo instead of gl/vulkan: the GL renderer on Nvidia let old frames show
     # through (ghost text/lines behind the panel), Vulkan spams warnings.

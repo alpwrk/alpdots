@@ -43,14 +43,23 @@ eval "$(zoxide init zsh)"
 # Machine-specific stuff (PATHs, EDITOR, ...) goes here, it's not tracked by git
 [ -f "$HOME/.zshrc.local" ] && source "$HOME/.zshrc.local"
 
+# Source a zsh plugin from wherever the distro put it
+# (Arch: /usr/share/zsh/plugins, FreeBSD: /usr/local/share, Debian: /usr/share)
+zplug() {
+	local f
+	for f in /usr/share/zsh/plugins/$1/$1.zsh /usr/local/share/$1/$1.zsh /usr/share/$1/$1.zsh; do
+		[ -r "$f" ] && { source "$f"; return; }
+	done
+}
+
 # must be at the bottom at all times
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#000000'
-source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
-source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+zplug zsh-autosuggestions
+zplug zsh-syntax-highlighting
 
 # history-substring-search: must be sourced after syntax-highlighting.
 # Up/Down search the history for what's already typed.
-source /usr/share/zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh
+zplug zsh-history-substring-search
 bindkey '^[[A' history-substring-search-up
 bindkey '^[[B' history-substring-search-down
 bindkey '^[OA' history-substring-search-up

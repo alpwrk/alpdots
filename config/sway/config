@@ -220,8 +220,10 @@ bindsym --locked Control+Mod1+adiaeresis exec playerctl next
 
 # --- Startup ---
 # Needed so systemd services and the polkit agent can talk to the Wayland session
-exec dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway
-exec /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
+# (without systemd, e.g. FreeBSD, --systemd fails, so just update dbus)
+exec sh -c 'dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway || dbus-update-activation-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway'
+# (path differs per OS: Arch /usr/lib/polkit-gnome, FreeBSD /usr/local/libexec)
+exec sh -c 'for a in /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 /usr/local/libexec/polkit-gnome-authentication-agent-1; do [ -x "$a" ] && exec "$a"; done'
 
 include /etc/sway/config.d/*
 
