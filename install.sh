@@ -104,6 +104,19 @@ JSON
   fi
 fi
 
+# Default waybar colors (half-transparent black). bgswitch's color row
+# (AltGr+#, then Down) overwrites this file, so it's not tracked by git.
+ACCENT="$DOTS/config/waybar/accent.css"
+if [[ ! -e "$ACCENT" ]]; then
+  cat > "$ACCENT" <<'CSS'
+/* Default waybar colors from install.sh, bgswitch overwrites this file. */
+@define-color background rgba(0, 0, 0, 0.5);
+@define-color foreground #ffffff;
+@define-color inverted #000000;
+CSS
+  echo "waybar: default colors written"
+fi
+
 # Initial wallpaper for bgswitch, the sway config reads it from here
 CACHE="$HOME/.cache/bgswitch"
 if [[ ! -e "$CACHE/current" ]]; then

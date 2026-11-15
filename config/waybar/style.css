@@ -1,8 +1,10 @@
-/* Monochrome bar: black background, white text, no borders. All colors are
-   defined once at the top so a theme swap is a two-line change. */
+/* Bar colors live in accent.css, written by bgswitch's color row (AltGr+#,
+   then Down): transparent, the wallpaper's accent colors or a standard color.
+   foreground = whichever of black/white contrasts better with background,
+   inverted = text color inside the white focused-workspace box.
+   install.sh writes the default (half-transparent black). Not tracked by git. */
 
-@define-color background rgba(0, 0, 0, 0.5);
-@define-color foreground #ffffff;
+@import "accent.css";
 
 /* --- Global reset --- */
 /* Waybar inherits a lot of GTK default styling, so flatten everything:
@@ -26,6 +28,7 @@
 
 window#waybar {
   background-color: @background;
+  transition: background-color 300ms ease-out;
 }
 
 /* --- Layout spacing --- */
@@ -68,13 +71,13 @@ window#waybar {
 #workspaces button.focused,
 #workspaces button.visible {
   background-color: @foreground;
-  color: @background;
+  color: @inverted;
   opacity: 1;
 }
 
 #workspaces button.focused label,
 #workspaces button.visible label {
-  color: @background;
+  color: @inverted;
 }
 
 /* --- Right side --- */
@@ -98,7 +101,7 @@ window#waybar {
 }
 
 #battery.critical:not(.charging) {
-  color: @background;
+  color: @inverted;
   background-color: @foreground;
   padding: 0 4px;
 }
