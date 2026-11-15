@@ -1,0 +1,42 @@
+#:schema https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json
+# Minimal all-white oh-my-posh theme: path (git branch) $
+# Docs: https://ohmyposh.dev/docs/configuration/general
+# Apply changes: open a new shell or run `exec zsh`.
+
+version = 4
+final_space = true
+
+[palette]
+  white = '#ffffff'
+
+[[blocks]]
+  type = 'prompt'
+  alignment = 'left'
+
+  # ~/some/path
+  [[blocks.segments]]
+    type = 'path'
+    style = 'plain'
+    template = '{{ .Path }} '
+    foreground = 'p:white'
+
+    [blocks.segments.options]
+      style = 'full'
+
+  # (branch), only inside a repo; * when there are uncommitted changes
+  [[blocks.segments]]
+    type = 'git'
+    style = 'plain'
+    template = '({{ .HEAD }}{{ if or .Working.Changed .Staging.Changed }}*{{ end }}) '
+    foreground = 'p:white'
+
+    [blocks.segments.options]
+      fetch_status = true
+      branch_icon = ''
+
+  # prompt char
+  [[blocks.segments]]
+    type = 'text'
+    style = 'plain'
+    template = "$"
+    foreground = 'p:white'
