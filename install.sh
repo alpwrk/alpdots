@@ -18,13 +18,13 @@ CONFIG="${XDG_CONFIG_HOME:-$HOME/.config}"
 STAMP="$(date +%Y%m%d_%H%M%S)"
 
 PKGS=(
-  swayfx swaybg waybar rofi mako wlogout swaylock-effects ghostty zsh
+  swayfx swaybg waybar rofi dmenu mako wlogout swaylock-effects ghostty zsh
   grim slurp wayfreeze wl-clipboard libnotify brightnessctl playerctl wireplumber
   polkit-gnome pavucontrol blueman network-manager-applet ddcutil
   python-gobject gtk4 gtk4-layer-shell
   adw-gtk-theme breeze-icons capitaine-cursors noto-fonts
   xdg-desktop-portal-gtk xdg-desktop-portal-wlr
-  oh-my-zsh-git zsh-autosuggestions zsh-syntax-highlighting
+  oh-my-posh-bin zsh-autosuggestions zsh-syntax-highlighting zsh-history-substring-search
   fastfetch yazi ffmpeg 7zip jq poppler fd ripgrep fzf zoxide
   ttf-jetbrains-mono-nerd ttf-bigblueterminal-nerd
 )
