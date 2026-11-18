@@ -26,7 +26,7 @@ PKGS_ARCH="
   python-gobject gtk4 gtk4-layer-shell
   adw-gtk-theme breeze-icons capitaine-cursors noto-fonts
   xdg-desktop-portal-gtk xdg-desktop-portal-wlr
-  oh-my-posh-bin zsh-autosuggestions zsh-syntax-highlighting zsh-history-substring-search
+  zsh-autosuggestions zsh-syntax-highlighting zsh-history-substring-search
   fastfetch yazi ffmpeg 7zip jq poppler fd ripgrep fzf zoxide
   ttf-jetbrains-mono-nerd ttf-bigblueterminal-nerd
 "
@@ -41,7 +41,7 @@ PKGS_FREEBSD="
   py311-gobject3 gtk4 gtk4-layer-shell glib
   adw-gtk3 kf6-breeze-icons capitaine-cursors noto-basic
   xdg-desktop-portal-gtk xdg-desktop-portal-wlr
-  oh-my-posh zsh-autosuggestions zsh-syntax-highlighting zsh-history-substring-search
+  zsh-autosuggestions zsh-syntax-highlighting zsh-history-substring-search
   fastfetch yazi ffmpeg 7-zip jq poppler-utils fd-find ripgrep fzf zoxide
   nerd-fonts
 "
