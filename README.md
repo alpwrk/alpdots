@@ -1,6 +1,6 @@
 # alpdots
 
-A minimal monochrome Sway rice: borderless SwayFX windows with blur, a half-transparent Waybar you can tint with the wallpaper's colors, a mono Rofi launcher, Mako notifications, Wlogout and Swaylock.
+A minimal monochrome Sway rice: borderless SwayFX windows with blur, a half-transparent Waybar you can tint with the wallpaper's colors, a mono Rofi launcher, Mako notifications, Wlogout and Hyprlock. The wallpaper switcher drives the colors: it tints the bar, generates a matching Ghostty theme, and the lock screen shows the same wallpaper.
 
 | Component    | Config                  |
 |--------------|-------------------------|
@@ -9,12 +9,12 @@ A minimal monochrome Sway rice: borderless SwayFX windows with blur, a half-tran
 | Launcher     | Rofi                    |
 | Notifications| Mako                    |
 | Power menu   | Wlogout                 |
-| Lockscreen   | Swaylock-effects        |
+| Lockscreen   | Hyprlock                |
 | Terminal     | Ghostty                 |
 | Shell        | zsh                     |
 | File manager | Yazi                    |
 | Fetch        | Fastfetch               |
-| Wallpaper    | bgswitch (GTK4 overlay, also sets the bar color) |
+| Wallpaper    | bgswitch (GTK4 overlay, also sets the bar color and the Ghostty theme) |
 | Font         | BigBlueTerm Nerd Font (bar, terminal), JetBrainsMono Nerd Font (rest) |
 
 ## Install
@@ -57,10 +57,10 @@ If you're on a different distro or want to install the packages yourself:
 
 ### Packages
 
-All programs this rice uses, in one command (`swayfx`, `wlogout`, `swaylock-effects`, and `wayfreeze` are in the AUR on plain Arch). Clicking the screenshot notification opens GIMP, install `gimp` if you want that:
+All programs this rice uses, in one command (`swayfx`, `wlogout` and `wayfreeze` are in the AUR on plain Arch). Clicking the screenshot notification opens GIMP, install `gimp` if you want that:
 
 ```sh
-yay -S --needed swayfx swaybg waybar rofi dmenu mako wlogout swaylock-effects ghostty grim slurp wayfreeze wl-clipboard libnotify brightnessctl playerctl wireplumber polkit-gnome pavucontrol blueman network-manager-applet ddcutil zsh zsh-autosuggestions zsh-syntax-highlighting zsh-history-substring-search fastfetch yazi ffmpeg 7zip jq poppler fd ripgrep fzf zoxide python-gobject gtk4 gtk4-layer-shell adw-gtk-theme breeze-icons capitaine-cursors noto-fonts xdg-desktop-portal-gtk xdg-desktop-portal-wlr ttf-jetbrains-mono-nerd ttf-bigblueterminal-nerd
+yay -S --needed swayfx swaybg waybar rofi dmenu mako wlogout hyprlock ghostty grim slurp wayfreeze wl-clipboard libnotify brightnessctl playerctl wireplumber polkit-gnome pavucontrol blueman network-manager-applet ddcutil zsh zsh-autosuggestions zsh-syntax-highlighting zsh-history-substring-search fastfetch yazi ffmpeg 7zip jq poppler fd ripgrep fzf zoxide python-gobject python-pillow gtk4 gtk4-layer-shell adw-gtk-theme breeze-icons capitaine-cursors noto-fonts xdg-desktop-portal-gtk xdg-desktop-portal-wlr ttf-jetbrains-mono-nerd ttf-bigblueterminal-nerd
 ```
 
 Then log into Sway. If you're already in Sway, press `Super + Shift + C`.
@@ -105,7 +105,8 @@ Hover the right edge of the bar, just left of the volume, to slide out the tray,
 - **Keyboard layout:** the config uses `de`. Change `xkb_layout` in `config/sway/config`.
 - **Monitors:** the config sets `DP-1` to 1920x1080@180Hz with adaptive sync and has a commented second monitor (`HDMI-A-1`) with fixed workspaces 1-5 / 6-10. Change those lines to your outputs (list them with `swaymsg -t get_outputs`); any other output just uses its preferred mode.
 - **Waybar:** `DP-1` and `HDMI-A-1` get their own bar with a DDC/CI brightness module (scroll on it, needs `ddcutil`), every other output (e.g. a laptop panel) gets a bar with the regular backlight module instead (scroll to change it). Next to it is the now-playing (mpris) module.
-- **Wallpaper:** press `AltGr + #` to open bgswitch, an Alt-Tab style picker with a big preview. `Tab`/`←`/`→`/`h`/`l` select and the wallpaper changes live while you browse, `Enter` keeps it, `Esc` goes back to the old one, and pressing `AltGr + #` again while it's open steps forward. `↓`/`j` jumps to the color row below: transparent, three accent colors taken from the selected wallpaper and ten standard colors. `Enter` there sets the Waybar background (text switches between black and white for contrast), `↑`/`k` goes back up. It lists images from `config/sway/wallpaper/` and `~/Pictures/wallpapers/` (or `$BGSWITCH_DIR`), and the choice is kept as a symlink in `~/.cache/bgswitch/current`. For the lockscreen, change `image=` in `config/swaylock/config`.
+- **Wallpaper:** press `AltGr + #` to open bgswitch, an Alt-Tab style picker with a big preview. `Tab`/`←`/`→`/`h`/`l` select and the wallpaper changes live while you browse, `Enter` keeps it and the switcher stays open, `Esc` closes it (and goes back to the last kept wallpaper if you were only browsing). It opens on the current wallpaper, pressing `AltGr + #` again while it's open just brings it to the front. `↓`/`j` jumps to the color row below: transparent, three accent colors taken from the selected wallpaper and ten standard colors. `Enter` there sets the Waybar background (text switches between black and white for contrast), `↑`/`k` goes back up. It lists images from `config/sway/wallpaper/` and `~/Pictures/wallpapers/` (or `$BGSWITCH_DIR`), and the choice is kept as a symlink in `~/.cache/bgswitch/current`. Hyprlock (`config/hypr/hyprlock.conf`) reads that symlink, so the lock screen shows the same wallpaper.
+- **Terminal colors:** every time bgswitch sets a wallpaper it runs `config/sway/scripts/ghostty-walltheme` (needs `python-pillow`). It maps the wallpaper's accent colors onto the 16 terminal colors, brightens them until they're readable on the translucent background, writes `~/.config/ghostty/auto/theme.ghostty` (not tracked by git) and makes open Ghostty windows reload. `ghostty-walltheme --print` shows the palette with its contrast values. If you change `background-opacity` in the Ghostty config, change `OPACITY` in the script too.
 - **Shell:** put machine-specific things (extra `PATH`s, `EDITOR`, …) into `~/.zshrc.local`, the tracked `.zshrc` sources it. Type `y` to open Yazi; when you quit, the shell `cd`s to where you were in Yazi. `Up`/`Down` search the history for what you've typed, `Ctrl + R`/`Ctrl + T`/`Alt + C` are fzf (history, files, cd) and `z <part of a dir>` jumps with zoxide. The prompt (`path (branch*) $`, `*` = uncommitted changes) is plain zsh, set in `home/.zshrc`.
 - **Battery module:** to add or remove it by hand, create or delete `config/waybar/local.jsonc` (see `group/laptop` in `config/waybar/config.common.jsonc`).
 - **Shell parts:** the bar, launcher, notification, power menu and wallpaper binds live in `config/sway/shell.conf`, so swapping any of them out only touches that file.

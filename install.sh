@@ -20,10 +20,10 @@ STAMP="$(date +%Y%m%d_%H%M%S)"
 OS="$(uname -s)"
 
 PKGS_ARCH="
-  swayfx swaybg waybar rofi dmenu mako wlogout swaylock-effects ghostty zsh
+  swayfx swaybg waybar rofi dmenu mako wlogout hyprlock ghostty zsh
   grim slurp wayfreeze wl-clipboard libnotify brightnessctl playerctl wireplumber
   polkit-gnome pavucontrol blueman network-manager-applet ddcutil
-  python-gobject gtk4 gtk4-layer-shell
+  python-gobject python-pillow gtk4 gtk4-layer-shell
   adw-gtk-theme breeze-icons capitaine-cursors noto-fonts
   xdg-desktop-portal-gtk xdg-desktop-portal-wlr
   zsh-autosuggestions zsh-syntax-highlighting zsh-history-substring-search
@@ -35,10 +35,10 @@ PKGS_ARCH="
 # with a warning instead of failing the whole install. Linux-only tools
 # (ddcutil, brightnessctl, wayfreeze, blueman) are left out on purpose.
 PKGS_FREEBSD="
-  swayfx swaybg waybar rofi-wayland dmenu mako wlogout swaylock-effects ghostty zsh
+  swayfx swaybg waybar rofi-wayland dmenu mako wlogout hyprlock ghostty zsh
   grim slurp wl-clipboard libnotify playerctl pipewire wireplumber
   polkit-gnome pavucontrol networkmgr
-  py311-gobject3 gtk4 gtk4-layer-shell glib
+  py311-gobject3 py311-pillow gtk4 gtk4-layer-shell glib
   adw-gtk3 kf6-breeze-icons capitaine-cursors noto-basic
   xdg-desktop-portal-gtk xdg-desktop-portal-wlr
   zsh-autosuggestions zsh-syntax-highlighting zsh-history-substring-search
