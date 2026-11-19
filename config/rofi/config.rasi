@@ -1,2 +1,18 @@
-// Just pulls in the theme; modi and display names are set in mono.rasi.
+// Pulls in the theme; modi and display names are set in mono.rasi.
 @theme "~/.config/rofi/mono.rasi"
+
+// Vim-style navigation on Ctrl+hjkl: j/k move through the list,
+// h/l switch between the Run/Apps/Window tabs.
+// Ctrl+h/j/k/l are rofi defaults for other actions, so they are
+// removed there first, otherwise rofi refuses the duplicate binding.
+configuration {
+    kb-remove-char-back: "BackSpace,Shift+BackSpace";
+    kb-remove-to-eol: "";
+    kb-accept-entry: "Control+m,Return,KP_Enter";
+    kb-mode-complete: "";
+
+    kb-row-down: "Down,Control+n,Control+j";
+    kb-row-up: "Up,Control+p,Control+k";
+    kb-mode-previous: "Shift+Left,Control+ISO_Left_Tab,Control+h";
+    kb-mode-next: "Shift+Right,Control+Tab,Control+l";
+}

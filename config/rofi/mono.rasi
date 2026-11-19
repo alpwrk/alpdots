@@ -1,19 +1,20 @@
-// Mono theme for rofi: dark grey surfaces, white accent, no icons anywhere.
-// Goes with the waybar setup, same font, same idea.
+// Mono theme for rofi: dark grey surfaces, white accent.
+// Same font as waybar/ghostty (BigBlueTerm), layout: prompt pill on top,
+// single-column app list with icons, mode tabs along the bottom edge.
 
 configuration {
     modi: "drun,run,window";
-    // Icons would break the text-only look
-    show-icons: false;
-    display-drun: " Apps";
-    display-run: " Run";
-    display-window: " Windows";
+    show-icons: true;
+    display-drun: "󰀻 Apps";
+    display-run: " Run";
+    display-window: " Window";
+    drun-display-format: "{name}";
 }
 
-// Color palette. bg has a bit of transparency so the swayfx blur shows through.
+// Color palette, fully opaque.
 * {
-    font: "JetBrainsMono Nerd Font 10";
-    bg: #0d0d0dcc;
+    font: "BigBlueTermPlus Nerd Font 11";
+    bg: #0d0d0d;
     bg-alt: #161616;
     surface: #1f1f1f;
     border: #2b2b2b;
@@ -22,55 +23,86 @@ configuration {
     accent: #ffffff;
     urgent: #9a9a9a;
     transparent: #00000000;
+    background-color: @transparent;
+    text-color: @fg;
 }
 
 window {
-    width: 680px;
+    width: 480px;
     border: 2px;
     border-color: @border;
-    border-radius: 2px;
+    border-radius: 0;
     background-color: @bg;
-    padding: 18px;
+    padding: 0;
 }
 
-mainbox { spacing: 14px; background-color: @transparent; }
+mainbox {
+    spacing: 0;
+    children: [ inputbar, listview, mode-switcher ];
+}
 
+// Only the search entry; the active mode is shown in the tab row below.
 inputbar {
-    spacing: 10px;
-    padding: 12px 14px;
+    spacing: 12px;
+    padding: 18px 20px 10px 20px;
+    children: [ entry ];
+}
+
+prompt {
+    padding: 6px 12px;
     border: 1px;
     border-color: @border;
-    border-radius: 2px;
-    background-color: @bg-alt;
-    children: [ prompt, entry ];
+    border-radius: 0;
+    background-color: @surface;
+    text-color: @accent;
 }
 
-prompt { text-color: @accent; background-color: @transparent; }
-
 entry {
-    placeholder: "Search applications…";
+    vertical-align: 0.5;
+    placeholder: "Search…";
     placeholder-color: @muted;
     text-color: @fg;
-    background-color: @transparent;
 }
 
 listview {
-    lines: 8;
     columns: 1;
+    lines: 8;
     // Shrink with fewer entries instead of keeping empty rows
     fixed-height: false;
     scrollbar: false;
-    spacing: 4px;
-    background-color: @transparent;
+    cycle: true;
+    spacing: 2px;
+    padding: 8px 20px 16px 20px;
 }
 
 element {
-    padding: 10px 12px;
+    padding: 8px 10px;
     spacing: 12px;
-    border-radius: 2px;
-    background-color: @transparent;
-    text-color: @fg;
+    border-radius: 0;
+    children: [ element-icon, element-text ];
 }
 
-element selected { background-color: @surface; text-color: @accent; }
-element-text { vertical-align: 0.5; background-color: @transparent; text-color: inherit; }
+element normal.normal, element alternate.normal { background-color: @transparent; text-color: @fg; }
+element selected.normal, element selected.active { background-color: @surface; text-color: @accent; }
+element normal.urgent, element alternate.urgent { text-color: @urgent; }
+
+element-icon { size: 20px; vertical-align: 0.5; background-color: inherit; }
+element-text { vertical-align: 0.5; background-color: inherit; text-color: inherit; }
+
+// Mode tabs flush with the bottom edge, like a tab strip.
+mode-switcher {
+    spacing: 0;
+    background-color: @bg-alt;
+}
+
+button {
+    padding: 12px;
+    horizontal-align: 0.5;
+    background-color: @bg-alt;
+    text-color: @muted;
+}
+
+button selected {
+    background-color: @surface;
+    text-color: @accent;
+}
