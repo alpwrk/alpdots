@@ -8,10 +8,12 @@
 #
 # Keys: Up/Down, k/j      = switch between the wallpaper strip and the color row
 #       Left/Right, h/l, Tab = select in the active row
-#       Enter             = set the wallpaper and close
-#                           (in the color row: set the waybar color, stays open)
+#       Enter             = set the wallpaper, the switcher stays open
+#                           (in the color row: set the waybar color)
 #       Esc               = close (an unconfirmed wallpaper is reverted)
-#       AltGr+# again     = next wallpaper
+# It opens on the current wallpaper; AltGr+# again only brings it to the front.
+# Setting a wallpaper also runs ghostty-walltheme (next to this script), which
+# derives the Ghostty colors from the image.
 # Wallpapers come from ~/.config/sway/wallpaper and $BGSWITCH_DIR
 # (default ~/Pictures/wallpapers). The chosen one is symlinked to
 # ~/.cache/bgswitch/current, which the sway config points at, so it
@@ -216,6 +218,10 @@ def set_wallpaper(path):
     os.symlink(path, tmp)
     os.replace(tmp, CURRENT)
     preview_wallpaper(path)
+    # Ghostty theme from the wallpaper's accent colors (runs in the background)
+    theme = os.path.join(os.path.dirname(os.path.realpath(__file__)), "ghostty-walltheme")
+    if os.access(theme, os.X_OK):
+        subprocess.Popen([theme, path], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 
 def contrast_text(hexcolor):
@@ -278,10 +284,9 @@ class Switcher(Gtk.Application):
         self.win = None
 
     def do_activate(self):
-        # Second launch (AltGr+# again) -> step forward like Alt+Tab
+        # Second launch (AltGr+# again): just bring it to the front
         if self.win:
-            self.focus_row(0)
-            self.move(1)
+            self.win.present()
             return
 
         # Same file name in both dirs: the first dir wins
@@ -329,6 +334,10 @@ class Switcher(Gtk.Application):
         row = Gtk.Box(spacing=6)
         cur = self.original
         self.items = []
+        # Empty spacers left/right so the first/last wallpaper can be
+        # scrolled to the middle of the strip too
+        pad = PREVIEW_W // 2 - STRIP_W // 2
+        row.append(Gtk.Box(width_request=pad))
         for path in self.walls:
             thumb = thumbnail(path, STRIP_W, STRIP_H)
             self.strip_thumbs.append(thumb)
@@ -345,6 +354,7 @@ class Switcher(Gtk.Application):
             box.add_controller(click)
             row.append(box)
             self.items.append(box)
+        row.append(Gtk.Box(width_request=pad))
         self.row = row
 
         self.scroller = Gtk.ScrolledWindow(
@@ -392,10 +402,10 @@ class Switcher(Gtk.Application):
         keys.connect("key-pressed", self.on_key)
         self.win.add_controller(keys)
 
-        # Like Alt+Tab: start on the next entry right away
-        start = self.walls.index(cur) if cur in self.walls else -1
+        # Start on the current wallpaper
+        start = self.walls.index(cur) if cur in self.walls else 0
         self.sel = 0
-        self.select((start + 1) % len(self.items))
+        self.select(start)
         self.win.present()
         # Scroll again after the first layout, there are no positions before that
         GLib.idle_add(lambda: self.scroll_to(self.sel) and False)
@@ -429,16 +439,12 @@ class Switcher(Gtk.Application):
         self.schedule_live_preview()
 
     def scroll_to(self, i):
-        """Scroll the selected thumbnail into the visible part of the strip."""
+        """Keep the selected thumbnail centered in the strip."""
         ok, rect = self.items[i].compute_bounds(self.row)
         if not ok or rect.get_width() == 0:
             return True
         adj = self.scroller.get_hadjustment()
-        x, w = rect.get_x(), rect.get_width()
-        if x < adj.get_value():
-            adj.set_value(x)
-        elif x + w > adj.get_value() + adj.get_page_size():
-            adj.set_value(x + w - adj.get_page_size())
+        adj.set_value(rect.get_x() + rect.get_width() / 2 - adj.get_page_size() / 2)
         return True
 
     def move(self, d):
@@ -531,9 +537,18 @@ class Switcher(Gtk.Application):
     # --- Finish -----------------------------------------------------------
 
     def apply(self, i):
+        """Set the wallpaper for good; the switcher stays open."""
+        if i != self.sel:  # mouse click: move the selection along
+            self.focus_row(0)
+            self.select(i)
         self.cancel_live_preview()
-        set_wallpaper(self.walls[i])
-        self.quit()
+        path = self.walls[i]
+        set_wallpaper(path)
+        if self.original in self.walls:
+            self.items[self.walls.index(self.original)].remove_css_class("current")
+        self.items[i].add_css_class("current")
+        self.original = path
+        self.shown = path
 
     def abort(self):
         self.cancel_live_preview()

@@ -1,5 +1,6 @@
 theme = Black Metal (Venom)
-background-opacity = 0.9
+# Must match OPACITY in sway/scripts/ghostty-walltheme
+background-opacity = 0.35
 background-blur = 20
 font-family = BigBlueTerm437 Nerd Font Mono
 font-size = 14
@@ -8,5 +9,6 @@ shell-integration-features = ssh-terminfo,ssh-env
 undo-timeout = 15s
 confirm-close-surface = false
 
-# Optional per-machine theme override (not tracked by git)
+# Colors generated from the wallpaper by ghostty-walltheme (bgswitch),
+# not tracked by git. The theme above is the fallback when it's missing.
 config-file = ?auto/theme.ghostty

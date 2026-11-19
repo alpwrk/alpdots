@@ -14,6 +14,8 @@ set $term ghostty
 # Get output names with: swaymsg -t get_outputs
 # Symlink to the wallpaper picked with bgswitch (AltGr + #), created by install.sh
 output * bg ~/.cache/bgswitch/current fill
+# Ghostty colors from the wallpaper (bgswitch also runs it on every change)
+exec_always ~/.config/sway/scripts/ghostty-walltheme
 
 # MSI MAG 256F: 180 Hz + Adaptive Sync (VRR), single-monitor setup
 output DP-1 mode 1920x1080@180Hz position 0 0
